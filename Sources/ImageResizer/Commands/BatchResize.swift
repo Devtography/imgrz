@@ -19,38 +19,84 @@ class BatchResize: Command {
     @Flag("-f", "--force",
           description: "Overwrites existing file(s)")
     var force: Bool
+    @Flag("-r", description: "Processes sub-folders recursively")
+    var recursive: Bool
+    
+    let fm = FileManager.default
+    var sourceUrl: URL!
+    var outUrl: URL!
 
     func execute() throws {
-        let sourceUrl = URL(fileURLWithPath: source, isDirectory: true)
-        let outUrl = URL(fileURLWithPath: destination, isDirectory: true)
+        self.sourceUrl = URL(fileURLWithPath: source, isDirectory: true)
+        self.outUrl = URL(fileURLWithPath: destination, isDirectory: true)
         
-        let contents = try FileManager.default.contentsOfDirectory(
+        let contents = try fm.contentsOfDirectory(
             at: sourceUrl, includingPropertiesForKeys: [])
         
         var imageUrls: [URL] = []
 
-        for url in contents {
-            if url.pathExtension == "png" || url.pathExtension == "jpg" {
-                imageUrls.append(url)
+        if self.recursive {
+            imageUrls = try self.recursiveImageSearch()
+        } else {
+            for url in contents {
+                if url.pathExtension == "png" || url.pathExtension == "jpg" {
+                    imageUrls.append(url)
+                }
             }
         }
         
-        for item in imageUrls {
-            var imagePathComs = item.pathComponents
-            imagePathComs.removeAll(where: sourceUrl.pathComponents.contains)
+        self.batchResize(images: imageUrls)
+    }
+    
+    private func recursiveImageSearch() throws -> [URL] {
+        let contentSubPaths = try fm.subpathsOfDirectory(atPath: self.source)
+        
+        var result: [URL] = []
+        
+        for path in contentSubPaths {
+            let url = URL(fileURLWithPath: "\(self.source)/\(path)")
             
-            var dest = outUrl
-            for com in imagePathComs {
-                dest.appendPathComponent(com)
+            if url.pathExtension == "png" || url.pathExtension == "jpg" {
+                result.append(url)
             }
-            
-            if force {
-                if try dest.checkResourceIsReachable() {
-                    try FileManager.default.removeItem(at: dest)
-                }
-            }
-            
-            ImageResizer.run(source: item, destination: dest, resizeTo: size)
         }
+
+        return result
+    }
+    
+    private func batchResize(images: [URL]) {
+        for img in images {
+            let dest = constructOutPath(from: img)
+
+            if self.force {
+                try? fm.removeItem(at: dest)
+            }
+            
+            if self.recursive {
+                let dirPath = dest.deletingLastPathComponent()
+                
+                try? fm.createDirectory(
+                    at: dirPath, withIntermediateDirectories: true
+                )
+            }
+
+            ImageResizer.run(
+                source: img,
+                destination: dest,
+                resizeTo: self.size
+            )
+        }
+    }
+    
+    private func constructOutPath(from source: URL) -> URL {
+        var pathComs = source.pathComponents
+        pathComs.removeAll(where: self.sourceUrl.pathComponents.contains)
+        
+        var outPath: URL = self.outUrl
+        for component in pathComs {
+            outPath.appendPathComponent(component)
+        }
+        
+        return outPath
     }
 }
