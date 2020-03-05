@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftCLI
+import Progress
 
 class BatchResize: Command {
     
@@ -65,7 +66,7 @@ class BatchResize: Command {
     }
     
     private func batchResize(images: [URL]) {
-        for img in images {
+        for img in Progress(images) {
             let dest = constructOutPath(from: img)
 
             if self.force {
