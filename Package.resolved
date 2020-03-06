@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Progress",
+        "repositoryURL": "https://github.com/jkandzi/Progress.swift",
+        "state": {
+          "branch": null,
+          "revision": "fed6598735d7982058690acf8f52a0a5fdaeb3e0",
+          "version": "0.4.0"
+        }
+      },
+      {
+        "package": "SwiftCLI",
+        "repositoryURL": "https://github.com/jakeheis/SwiftCLI",
+        "state": {
+          "branch": null,
+          "revision": "c72c4564f8c0a24700a59824880536aca45a4cae",
+          "version": "6.0.1"
+        }
+      },
+      {
+        "package": "SwiftGD",
+        "repositoryURL": "https://github.com/twostraws/SwiftGD.git",
+        "state": {
+          "branch": null,
+          "revision": "1960998971b453101e740f25bc6d9fb01e0ba225",
+          "version": "2.5.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
