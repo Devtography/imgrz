@@ -5,7 +5,8 @@ build:
 		swift build -c release --disable-sandbox
 
 install: build
-		install ".build/release/imgrz" "$(bindir)"
+		mkdir -p "$(bindir)"
+		install ".build/release/imgrz" "$(bindir)/imgrz"
 
 uninstall:
 		rm -rf "$(bindir)/imgrz"
