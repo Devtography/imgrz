@@ -9,15 +9,16 @@ image resizing feature. `GD` library will have to be installed on your computer
 in order to use `imgrz`.
 
 ```sh
-# For macOS users, use Homebrew to install GD library
-brew install gd
-# Download the mac executable of imgrz
-curl https://github.com/Devtography/imgrz/releases/download/1.0.0/imgrz_mac -o imgrz
+# macOS
+brew tap devtography/utilities
+brew install imgrz
 
-# For Linux users, install via apt
+# For Ubuntu users, install `GD` library via apt
 apt install libgd-dev
-# Download the Linux executable of imgrz
-curl https//github.com/Devtography/imgrz/releases/download/1.0.0/imgrz
+# Clone the repository and compile from source
+git clone https://github.com/Devtography/imgrz.git
+cd imgrz
+make install
 ```
 
 ## Usage
